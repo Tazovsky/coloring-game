@@ -3,7 +3,8 @@ import numpy as np
 from colorama import Back, Fore, Style
 
 # -------- init board
-colors_map = {'r': Back.RED, 'b': Back.BLUE, 'g': Back.GREEN, 'y': Back.YELLOW}
+class ColorsMap:
+    map = {'r': Back.RED, 'b': Back.BLUE, 'g': Back.GREEN, 'y': Back.YELLOW}
 
 def init_board(ncol: int = 18, nrow: int = 18):
     avail_colors = ('r', 'b', 'g', 'y')
@@ -13,7 +14,7 @@ def init_board(ncol: int = 18, nrow: int = 18):
 
 # -------- print functions
 
-def print_row(row, colors_map, dummy_char="   "):
+def print_row(row, colors_map: dict, dummy_char: str = "   "):
     out = ''
     for clr in row:
         out = out + colors_map[clr] + dummy_char
@@ -73,7 +74,7 @@ def get_colored_points(board, color: str):
     return color_matched
 
 
-def color_board(board, color):
+def color_board(board: np.ndarray, color: str):
     board_new = np.copy(board)
 
     starting_color = board_new[(0, 0)]
@@ -90,29 +91,36 @@ def color_board(board, color):
 # ------------ game
 
 def validate_color(x: str):
-    return x in colors_map.keys()
+    colors = ColorsMap()
+    return x in colors.map.keys()
 
 
 def user_input(msg: str):
     selected_color = input(msg)
+    colors = ColorsMap()
     if not validate_color(selected_color):
-        print(Back.YELLOW + Fore.BLACK + "Invalid input. Select from: %s." % [x for x in colors_map.keys()]  + Style.RESET_ALL, end="\n")
+        print(Back.YELLOW + Fore.BLACK +
+              "Invalid input. Select from: %s." % [x for x in colors.map.keys()] +
+              Style.RESET_ALL, end="\n")
         return user_input(msg)
     else:
         return selected_color
 
-def is_game_completed(board: np.ndarray):
+
+def is_game_completed(board: np.ndarray) -> bool:
     if len(list(np.unique(board))) == 1:
         print(Back.GREEN + "\t\t!!! YOU WON !!!\t\t" + Style.RESET_ALL, end="\n")
         return True
+    else:
+        return False
 
 
-def you_lost():
+def you_lost() -> bool:
     print("\n" + Back.RED + "\t\tYOU LOST :(\t\t" + Style.RESET_ALL, end="\n")
     return False
 
 
-def start_game(board: np.ndarray = None, imax: int = 21):
+def start_game(board: np.ndarray, colors_map: dict, imax: int = 21):
     if board is None:
         board = init_board()
     print("Your board is:")
@@ -124,6 +132,37 @@ def start_game(board: np.ndarray = None, imax: int = 21):
         if is_game_completed(board):
             return True
     return you_lost()
+
+
+# ------ game class
+
+class Game:
+    def __init__(self, max_iteration = 21, nrow: int = 18, ncol: int = 18):
+        self.max_iteration = max_iteration
+        self.current_iteration = None
+        self.__ncol = ncol
+        self.__nrow = nrow
+        self.__board = init_board(self.__ncol, self.__nrow)
+        self.__colors_map = ColorsMap().map
+
+    def print(self):
+        print_board(self.__board, self.__colors_map)
+    def user_won(self):
+        is_game_completed(self.__board)
+    def start(self):
+        print("Your board is:")
+        self.print()
+        for i in range(self.max_iteration):
+            selected_color = user_input("(Round #%s/%s) Select color:\n" % (i, self.max_iteration))
+            self.__board = color_board(self.__board, selected_color)
+            self.print()
+            if self.user_won():
+                return True
+        return you_lost()
+
+
+
+
 
 
 

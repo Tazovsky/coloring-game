@@ -1,3 +1,4 @@
 from funs import *
 
-start_game()
+game = Game()
+game.start()
