@@ -139,7 +139,6 @@ def start_game(board: np.ndarray, colors_map: dict, imax: int = 21):
 class Game:
     def __init__(self, max_iteration = 21, nrow: int = 18, ncol: int = 18):
         self.max_iteration = max_iteration
-        self.current_iteration = None
         self.__ncol = ncol
         self.__nrow = nrow
         self.__board = init_board(self.__ncol, self.__nrow)
