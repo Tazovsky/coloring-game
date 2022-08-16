@@ -6,7 +6,7 @@ from colorama import Back, Fore, Style
 class ColorsMap:
     map = {'r': Back.RED, 'b': Back.BLUE, 'g': Back.GREEN, 'y': Back.YELLOW}
 
-def init_board(ncol: int = 18, nrow: int = 18):
+def init_board(ncol: int = 18, nrow: int = 18) -> np.ndarray:
     avail_colors = ('r', 'b', 'g', 'y')
     random_colors = random.choices(avail_colors, k=ncol * nrow)
     return np.array(random_colors).reshape(ncol, nrow)
@@ -14,13 +14,14 @@ def init_board(ncol: int = 18, nrow: int = 18):
 
 # -------- print functions
 
-def print_row(row, colors_map: dict, dummy_char: str = "   "):
+def print_row(row, colors_map: dict, dummy_char: str = "   ") -> None:
     out = ''
     for clr in row:
         out = out + colors_map[clr] + dummy_char
     print(out + Style.RESET_ALL, end="\n")
 
-def print_board(board, colors_map):
+
+def print_board(board, colors_map) -> None:
     board = np.copy(board)
     rows, columns = board.shape
     for i in range(rows):
@@ -29,7 +30,7 @@ def print_board(board, colors_map):
 
 # ------ coloring functions
 
-def get_colored_points(board, color: str):
+def get_colored_points(board: np.ndarray, color: str) -> list:
 
     row, col = board.shape
 
@@ -74,7 +75,7 @@ def get_colored_points(board, color: str):
     return color_matched
 
 
-def color_board(board: np.ndarray, color: str):
+def color_board(board: np.ndarray, color: str) -> np.ndarray:
     board_new = np.copy(board)
 
     starting_color = board_new[(0, 0)]
@@ -90,12 +91,12 @@ def color_board(board: np.ndarray, color: str):
 
 # ------------ game
 
-def validate_color(x: str):
+def validate_color(x: str) -> bool:
     colors = ColorsMap()
     return x in colors.map.keys()
 
 
-def user_input(msg: str):
+def user_input(msg: str) -> str:
     selected_color = input(msg)
     colors = ColorsMap()
     if not validate_color(selected_color):
