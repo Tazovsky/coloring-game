@@ -147,7 +147,7 @@ class Game:
     def print(self):
         print_board(self.__board, self.__colors_map)
     def user_won(self):
-        is_game_completed(self.__board)
+        return is_game_completed(self.__board)
     def start(self):
         print("Your board is:")
         self.print()
